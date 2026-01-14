@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ресурсы и Источники - Парурез</title>
+    <script>
+        // Этот код срабатывает мгновенно, до отрисовки страницы
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Стили для ссылок-карточек */
+        .resource-link {
+            display: block;
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+        .resource-link:hover {
+            border-color: #007bff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .resource-link h3 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .resource-link .url {
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .book-list {
+            list-style: none;
+            padding: 0;
+        }
+        .book-list li {
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-left: 4px solid #6c757d;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="warning-banner" class="warning">
+        <div class="container">
+
+            <span>⚠️ Используйте только проверенные источники. Остерегайтесь "чудо-таблеток".</span>
+            <span id="close-btn" class="close-btn">&times;</span>
+        </div>
+    </div>
+
+    <header> 
+        <button id="theme-toggle" class="theme-toggle-btn" title="Переключить тему">
+        🌙
+        </button>
+        <div class="container">
+            <h1>Полезные ресурсы</h1>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <a href="index.html">Главная</a>
+            <a href="diagnostics.html">Диагностика</a>
+            <a href="therapy.html">Методы лечения</a>
+            <a href="resources.html" class="active">Ресурсы и источники</a>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        
+        <h2>Официальные организации</h2>
+        <p>Эти организации занимаются исследованиями, организацией семинаров и поддержкой пациентов на мировом уровне.</p>
+
+        <a href="https://paruresis.org/" target="_blank" class="resource-link">
+            <h3>🌐 IPA — International Paruresis Association</h3>
+            <span class="url">paruresis.org</span>
+            <p>Главная мировая организация (США). Основана профессором Стивеном Сойфером. Самая полная база знаний, научные статьи, анонсы воркшопов и списки врачей.</p>
+        </a>
+
+        <a href="https://www.ukpt.org.uk/" target="_blank" class="resource-link">
+            <h3>🇬🇧 UK Paruresis Trust</h3>
+            <span class="url">ukpt.org.uk</span>
+            <p>Британская ассоциация. Очень полезный сайт с советами, историями успеха и методичками, адаптированными под европейские стандарты.</p>
+        </a>
+
+        <h2>Форумы и Сообщества</h2>
+        <p>Живое общение с людьми, у которых та же проблема. Вы не одни.</p>
+
+        <a href="https://www.reddit.com/r/Paruresis/" target="_blank" class="resource-link">
+            <h3>💬 Reddit: r/Paruresis</h3>
+            <span class="url">reddit.com/r/Paruresis</span>
+            <p>Самое активное англоязычное сообщество (более 6000 участников). Здесь обсуждают успехи в Breath Hold, делятся страхами и поддерживают друг друга ежедневно.</p>
+        </a>
+
+        <a href="https://paruresis.org/discussion-forum/" target="_blank" class="resource-link">
+            <h3>💬 Форум IPA</h3>
+            <span class="url">paruresis.org/discussion-forum</span>
+            <p>Официальный форум ассоциации. Более серьезные обсуждения, часто отвечают эксперты и психологи.</p>
+        </a>
+
+        <h2>Рекомендуемая литература</h2>
+        <p>Эти книги считаются "золотым стандартом" в терапии паруреза.</p>
+        <ul class="book-list">
+            <li>
+                <strong>📚 "Shy Bladder Syndrome: Your Step-By-Step Guide to Overcoming Paruresis"</strong><br>
+                <em>Авторы: Steven Soifer, George Zgourides</em><br>
+                Главная книга от основателя IPA. Подробное описание природы заболевания и протоколов когнитивно-поведенческой терапии.
+            </li>
+            <li>
+                <strong>📚 "Bathrooms Make Me Nervous"</strong><br>
+                <em>Автор: Carol Olmert</em><br>
+                Книга, написанная женщиной и включающая специфику женского паруреза (хотя полезна всем). Фокус на психологии и самопринятии.
+            </li>
+            <li>
+                <strong>📚 "Free to Pee: A Self-Help Guide"</strong><br>
+                <em>Автор: Dr. Christopher G. Fairburn</em><br>
+                Практическое руководство по методам экспозиции.
+            </li>
+        </ul>
+
+        <h2>Научные исследования (PubMed)</h2>
+        <p>Ссылки на реальные клинические исследования для тех, кто хочет изучить доказательную базу.</p>
+        
+        <ul style="margin-bottom: 30px;">
+            <li>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/?term=paruresis" target="_blank">🔎 <strong>Поиск по запросу "Paruresis" на PubMed</strong></a> — Национальная медицинская библиотека США.
+            </li>
+            <li>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/22137568/" target="_blank">📄 <strong>Hammelstein et al. (2011)</strong></a> — Исследование эффективности когнитивно-поведенческой терапии при парурезе.
+            </li>
+            <li>
+                <a href="https://pubmed.ncbi.nlm.nih.gov/16342602/" target="_blank">📄 <strong>Soifer et al. (2000)</strong></a> — Фундаментальная работа, классифицирующая парурез как социальную фобию.
+            </li>
+            <li>
+                <strong>PubMed (Запросы по теме)</strong> — база медицинских публикаций (рекомендую искать по ключевым словам <em>Paruresis</em> или <em>Shy Bladder Syndrome</em>).
+            </li>
+            <li>
+               <strong>Steven Soifer's Research:</strong>  Профессор Стивен Сойфер — ведущий мировой эксперт по этой теме. Его работы подтверждают, что 80% пациентов достигают успеха после курса градуированной экспозиции.
+            </li>
+        </ul>
+
+         <h2>Полезные видео на ютубе</h2>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/QtXvrgVOG8k?si=KignfxXosICBsX0n" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/vBVjjANyaH8?si=TSqD8Urnnz1P3OM5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/hvtBVD7pPww?si=xQS-6vNh8Tth7pB1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/jrcBV-uRvdc?si=ItcGqt5xtetthyuh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            
+
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Информационный сайт о Парурезе</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
