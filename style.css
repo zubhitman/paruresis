@@ -472,4 +472,81 @@ footer {
     background: red;
     border-radius: 50%;
     transform: translate(-50%, -50%);
+
+}
+
+/* --- Стили для Аккордеона --- */
+
+.accordion {
+    margin-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.accordion-header {
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 20px 10px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Цвет заголовка в темной теме (если поддерживается) */
+[data-theme="dark"] .accordion-header {
+    color: #f0f0f0;
+}
+
+.accordion-header:hover {
+    background-color: rgba(0, 123, 255, 0.05); /* Легкий голубой фон при наведении */
+}
+
+[data-theme="dark"] .accordion-header:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.accordion-header .icon {
+    font-size: 1.5rem;
+    color: #007bff;
+    transition: transform 0.3s ease;
+}
+
+/* Класс active добавляется через JS при открытии */
+.accordion-header.active .icon {
+    transform: rotate(45deg); /* Превращаем плюс в крестик */
+}
+
+.accordion-header.active {
+    color: #007bff; /* Подсветка активного заголовка */
+}
+
+/* Контейнер для скрытого контента */
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out; /* Плавная анимация высоты */
+    opacity: 0;
+}
+
+/* Когда блок открыт (добавляем класс open в JS или управляем стилями) */
+.accordion-content.open {
+    opacity: 1;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-in;
+}
+
+/* Внутренний отступ для контента, чтобы анимация не дергалась */
+.inner-content {
+    padding: 0 15px 30px 15px;
 }
