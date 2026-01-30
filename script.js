@@ -277,4 +277,32 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.log("Игра не найдена.");
     }
+
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const accordions = document.querySelectorAll('.accordion-header');
+
+    accordions.forEach(accordion => {
+        accordion.addEventListener('click', function() {
+            // 1. Переключаем активный класс на самой кнопке (для поворота иконки и цвета)
+            this.classList.toggle('active');
+
+            // 2. Находим блок с контентом, который идет сразу после кнопки
+            const content = this.nextElementSibling;
+
+            // 3. Логика открытия/закрытия с анимацией
+            if (content.style.maxHeight) {
+                // Если max-height установлен, значит блок открыт -> закрываем
+                content.style.maxHeight = null;
+                content.classList.remove('open');
+            } else {
+                // Если null, значит закрыт -> открываем
+                // scrollHeight - это реальная высота контента внутри
+                content.style.maxHeight = content.scrollHeight + "px"; 
+                content.classList.add('open');
+            }
+        });
+    });
 });
