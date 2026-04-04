@@ -588,32 +588,3 @@ iframe {
     height: auto;
     aspect-ratio: 16 / 9;
 }
-
-/* Тёмная тема: делаем все ссылки яркими и читаемыми */
-[data-theme="dark"] a {
-    color: #7dd3fc;        /* светлый голубой, хорошо видно на тёмном */
-    text-decoration: underline;
-    text-underline-offset: 2px;
-}
-
-[data-theme="dark"] a:hover {
-    color: #bae6fd;        /* ещё светлее при наведении */
-    text-decoration-thickness: 2px;
-}
-
-/* Ссылки внутри карточек ресурсов (заголовки) тоже поправим */
-[data-theme="dark"] .resource-link h3 {
-    color: #7dd3fc;
-}
-
-/* Дополнительно: ссылки в списках (PubMed, другие списки) */
-[data-theme="dark"] ul li a,
-[data-theme="dark"] .main-content ul li a {
-    color: #7dd3fc;
-    font-weight: 500;
-}
-
-/* Чтобы ссылки, которые уже были синими в светлой теме, не ломались */
-[data-theme="dark"] a:visited {
-    color: #c4b5fd;       /* фиолетово-голубой для посещённых */
-}
