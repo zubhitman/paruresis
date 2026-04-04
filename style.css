@@ -459,13 +459,67 @@ footer {
     padding: 0 16px 24px 16px;
 }
 
-/* АДАПТИВ */
+/* АДАПТИВ ДЛЯ МОБИЛЬНЫХ */
 @media (max-width: 768px) {
     header h1 { font-size: 1.8rem; }
     .main-content { padding: 24px; margin: 20px 16px 40px; }
-    nav { margin: 12px; border-radius: 32px; }
-    nav a { padding: 8px 16px; font-size: 0.9rem; }
-    .theme-toggle-btn { top: 16px; right: 16px; width: 40px; height: 40px; font-size: 1.3rem; }
+    
+    /* Навигация – теперь всегда приклеена сверху */
+    nav {
+        position: sticky;
+        top: 0;
+        margin: 0;
+        border-radius: 0;
+        padding: 6px 12px;
+        background: var(--bg-card);
+        backdrop-filter: blur(12px);
+        z-index: 200;
+        box-shadow: var(--shadow-md);
+    }
+    nav .container {
+        justify-content: center;
+        gap: 4px;
+    }
+    nav a {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    .theme-toggle-btn {
+        top: 12px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+    }
     h2 { font-size: 1.5rem; }
-    #game-container { height: 360px; }
+    #game-container { height: 320px; }
+    
+    /* Улучшаем кликабельность на тач-устройствах */
+    a, button, .accordion-header {
+        touch-action: manipulation;
+    }
+    /* Аккордеон – больше отступы для пальцев */
+    .accordion-header {
+        padding: 16px 12px;
+        font-size: 1rem;
+    }
+    iframe {
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+}
+
+/* Дополнительно для очень узких экранов (до 480px) */
+@media (max-width: 480px) {
+    header h1 { font-size: 1.5rem; }
+    .main-content { padding: 18px; }
+    nav a {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+    .resource-link, .method-block {
+        padding: 16px;
+    }
 }
