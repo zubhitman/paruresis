@@ -569,3 +569,22 @@ footer {
         padding: 18px 12px;
     }
 }
+
+/* Защита от вылезания контента */
+body {
+    overflow-x: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Для любых iframe (видео) – адаптивность */
+iframe {
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+}
