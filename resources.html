@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ресурсы и Источники - Парурез</title>
-    <script>
-        // Этот код срабатывает мгновенно, до отрисовки страницы
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        })();
-    </script>
+   <script>
+    (function() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === null) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (saved === null) localStorage.setItem('theme', 'dark');
+        }
+    })();
+</script>
     <link rel="stylesheet" href="style.css">
     <style>
         /* Стили для ссылок-карточек */
@@ -117,7 +117,7 @@
 
         <h2>Рекомендуемая литература</h2>
         <p>Эти книги считаются "золотым стандартом" в терапии паруреза.</p>
-        <ul class="book-list">
+        <ul>
             <li>
                 <strong>📚 "Shy Bladder Syndrome: Your Step-By-Step Guide to Overcoming Paruresis"</strong><br>
                 <em>Авторы: Steven Soifer, George Zgourides</em><br>
@@ -170,7 +170,7 @@
             </li>           
         </ul>
 
-         <h2>Полезные видео на ютубе</h2>
+         <h2>Полезные видео на ютубе</h2><br>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/QtXvrgVOG8k?si=KignfxXosICBsX0n" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/vBVjjANyaH8?si=TSqD8Urnnz1P3OM5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/hvtBVD7pPww?si=xQS-6vNh8Tth7pB1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

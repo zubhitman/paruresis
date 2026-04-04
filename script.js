@@ -1,308 +1,264 @@
-// script.js - Версия 8.0 (Звук + Прогрессия сложности)
+// script.js - Версия 10.0 (Accordion fixed + Theme toggle + Optimized game)
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Скрипт v8.0: Audio Engine Ready");
+    console.log("Script v10.0: All systems ready");
 
-    // ==========================================
-    // 1. АУДИО ДВИЖОК (Web Audio API)
-    // Генерируем звуки кодом, без mp3 файлов
-    // ==========================================
+    // ========== 1. АККОРДЕОН (для therapy.html) ==========
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    accordionHeaders.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const content = this.nextElementSibling;
+            const isActive = this.classList.contains('active');
+
+            // Закрываем все остальные (аккордеон-style, только один открыт)
+            accordionHeaders.forEach(btn => {
+                if (btn !== this && btn.classList.contains('active')) {
+                    btn.classList.remove('active');
+                    const otherContent = btn.nextElementSibling;
+                    if (otherContent) {
+                        otherContent.style.maxHeight = null;
+                        otherContent.classList.remove('open');
+                    }
+                }
+            });
+
+            // Переключаем текущий
+            if (!isActive) {
+                this.classList.add('active');
+                if (content) {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.classList.add('open');
+                }
+            } else {
+                this.classList.remove('active');
+                if (content) {
+                    content.style.maxHeight = null;
+                    content.classList.remove('open');
+                }
+            }
+        });
+    });
+
+    // ========== 2. ТЕМА (тёмная по умолчанию, но с корректным переключением) ==========
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    // Если нет сохранённой темы — ставим тёмную
+    if (!localStorage.getItem('theme')) {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        if (themeToggle) themeToggle.textContent = '☀️';
+    } else {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            if (themeToggle) themeToggle.textContent = '☀️';
+        } else {
+            html.removeAttribute('data-theme');
+            if (themeToggle) themeToggle.textContent = '🌙';
+        }
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeToggle.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = '☀️';
+            }
+        });
+    }
+
+    // ========== 3. ЗАКРЫТИЕ БАННЕРА ==========
+    const closeBtn = document.getElementById('close-btn');
+    const warning = document.getElementById('warning-banner');
+    if (closeBtn && warning) {
+        closeBtn.addEventListener('click', () => warning.style.display = 'none');
+    }
+
+    // ========== 4. АУДИО ДЛЯ ИГРЫ (Web Audio) ==========
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
-    let noiseNode;
-    let gainNode;
+    let audioCtx, noiseNode, gainNode;
 
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new AudioContext();
-            
-            // Создаем буфер для белого шума (звук воды)
-            const bufferSize = audioCtx.sampleRate * 2; // 2 секунды
+            const bufferSize = audioCtx.sampleRate * 2;
             const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
             const data = buffer.getChannelData(0);
-
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1; // Белый шум
-            }
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
 
             noiseNode = audioCtx.createBufferSource();
             noiseNode.buffer = buffer;
             noiseNode.loop = true;
 
-            // Фильтр, чтобы звук был мягче (Lowpass)
             const filter = audioCtx.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.value = 1000;
 
-            // Контроль громкости
             gainNode = audioCtx.createGain();
-            gainNode.gain.value = 0; // Сначала тишина
+            gainNode.gain.value = 0;
 
-            // Цепочка: Шум -> Фильтр -> Громкость -> Динамики
             noiseNode.connect(filter);
             filter.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-            
             noiseNode.start();
         }
-        // Возобновляем контекст, если браузер его приостановил
         if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function setStreamSound(isFlowing) {
-        if (!gainNode) return;
-        // Плавное включение/выключение звука
+    function setStreamSound(active) {
+        if (!gainNode || !audioCtx) return;
         const now = audioCtx.currentTime;
-        if (isFlowing) {
+        if (active) {
             gainNode.gain.cancelScheduledValues(now);
-            gainNode.gain.linearRampToValueAtTime(0.15, now + 0.1); // Громкость 15%
+            gainNode.gain.linearRampToValueAtTime(0.12, now + 0.1);
         } else {
             gainNode.gain.cancelScheduledValues(now);
-            gainNode.gain.linearRampToValueAtTime(0, now + 0.1); // Тишина
+            gainNode.gain.linearRampToValueAtTime(0, now + 0.1);
         }
     }
 
+    // ========== 5. ИГРА-СИМУЛЯТОР ==========
+    const gameContainer = document.getElementById('game-container');
+    if (gameContainer) {
+        const targetWrapper = document.getElementById('target-wrapper');
+        const streamBeam = document.getElementById('stream-beam');
+        const aimSight = document.getElementById('aim-sight');
+        const startScreen = document.getElementById('start-screen');
+        const scoreSpan = document.getElementById('score');
+        const splashDiv = document.getElementById('splash-effect');
 
-    // ==========================================
-    // 2. ОБЩАЯ ЛОГИКА САЙТА
-    // ==========================================
-    const themeToggle = document.getElementById('theme-toggle');
-    const htmlElement = document.documentElement;
-    
-    if (themeToggle) {
-        themeToggle.textContent = htmlElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
-        themeToggle.addEventListener('click', function() {
-            const isDark = htmlElement.getAttribute('data-theme') === 'dark';
-            if (isDark) {
-                htmlElement.removeAttribute('data-theme');
-                themeToggle.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            } else {
-                htmlElement.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-    }
+        let isPlaying = false, isFiring = false;
+        let score = 0, lastScoreUpdate = 0;
+        let mouseX = 0, mouseY = 0, aimX = 0, aimY = 0;
+        let noiseX = 0, noiseY = 0;
+        let targetX = 0, targetY = 0;
+        let speedX = 2, speedY = 1.5;
 
-    const closeBtn = document.getElementById('close-btn');
-    const warningBanner = document.getElementById('warning-banner');
-    if (closeBtn && warningBanner) {
-        closeBtn.addEventListener('click', () => warningBanner.style.display = 'none');
-    }
-
-    // ==========================================
-    // 3. ИГРА-СИМУЛЯТОР
-    // ==========================================
-    
-    const container = document.getElementById("game-container");
-    
-    if (container) {
-        const targetWrapper = document.getElementById("target-wrapper");
-        const streamBeam = document.getElementById("stream-beam");
-        const aimSight = document.getElementById("aim-sight");
-        const startScreen = document.getElementById("start-screen");
-        const scoreDisplay = document.getElementById("score");
-        const splash = document.getElementById("splash-effect");
-
-        let isPlaying = false;
-        let isFiring = false;
-        let score = 0;
-        
-        // Координаты
-        let mouseX = 0; let mouseY = 0;
-        let currentAimX = 0; let currentAimY = 0;
-        let noiseX = 0; let noiseY = 0;
-
-        // Мишень
-        let targetX = 0;
-        let targetY = 0;
-        let baseSpeedX = 2; // Базовая скорость
-        let baseSpeedY = 1.5;
-        let currentSpeedX = 2;
-        let currentSpeedY = 1.5;
-
-
-        // Вспомогательная функция (Raycast)
-        function getClosestPointOnSegment(px, py, x1, y1, x2, y2) {
-            const C = x2 - x1;
-            const D = y2 - y1;
-            const dot = (px - x1) * C + (py - y1) * D;
-            const lenSq = C * C + D * D;
-            let param = -1;
-            if (lenSq !== 0) param = dot / lenSq;
-            let xx, yy;
-            if (param < 0) { xx = x1; yy = y1; }
-            else if (param > 1) { xx = x2; yy = y2; }
-            else { xx = x1 + param * C; yy = y1 + param * D; }
-            return { x: xx, y: yy };
+        function getClosestPoint(px, py, x1, y1, x2, y2) {
+            const ax = x2 - x1, ay = y2 - y1;
+            const t = ((px - x1) * ax + (py - y1) * ay) / (ax * ax + ay * ay || 1);
+            const clamped = Math.min(1, Math.max(0, t));
+            return { x: x1 + ax * clamped, y: y1 + ay * clamped };
         }
 
-        function tryStartGame() {
-            initAudio(); // Включаем звук при первом клике
-            if (!isPlaying) {
-                isPlaying = true;
-                startScreen.style.display = 'none';
-                score = 0;
-                scoreDisplay.innerText = "0";
-                requestAnimationFrame(gameLoop);
-            }
+        function startGame() {
+            if (isPlaying) return;
+            initAudio();
+            isPlaying = true;
+            if (startScreen) startScreen.style.display = 'none';
+            score = 0;
+            if (scoreSpan) scoreSpan.innerText = '0';
+            requestAnimationFrame(gameLoop);
         }
-        if (startScreen) startScreen.addEventListener('click', tryStartGame);
+
+        if (startScreen) startScreen.addEventListener('click', startGame);
 
         // Управление
-        container.addEventListener('mousemove', (e) => {
-            const rect = container.getBoundingClientRect();
+        gameContainer.addEventListener('mousemove', (e) => {
+            const rect = gameContainer.getBoundingClientRect();
             mouseX = e.clientX - rect.left;
             mouseY = e.clientY - rect.top;
         });
-        
-        // Кнопка мыши / Тач
-        const startFire = () => { if(isPlaying) { isFiring = true; setStreamSound(true); } };
+        const startFire = () => { if (isPlaying) { isFiring = true; setStreamSound(true); } };
         const stopFire = () => { isFiring = false; setStreamSound(false); };
-
-        container.addEventListener('mousedown', startFire);
-        container.addEventListener('mouseup', stopFire);
-        container.addEventListener('mouseleave', stopFire); // Если курсор ушел с поля
-
-        container.addEventListener('touchstart', (e) => { 
-            e.preventDefault(); 
-            if(!isPlaying) { tryStartGame(); } 
-            else { 
+        gameContainer.addEventListener('mousedown', startFire);
+        gameContainer.addEventListener('mouseup', stopFire);
+        gameContainer.addEventListener('mouseleave', stopFire);
+        gameContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!isPlaying) startGame();
+            else {
                 startFire();
-                const rect = container.getBoundingClientRect();
-                mouseX = e.touches[0].clientX - rect.left;
-                mouseY = e.touches[0].clientY - rect.top;
+                const rect = gameContainer.getBoundingClientRect();
+                const touch = e.touches[0];
+                mouseX = touch.clientX - rect.left;
+                mouseY = touch.clientY - rect.top;
             }
         });
-        container.addEventListener('touchend', stopFire);
-        container.addEventListener('touchmove', (e) => {
-             if(isPlaying) {
-                const rect = container.getBoundingClientRect();
-                mouseX = e.touches[0].clientX - rect.left;
-                mouseY = e.touches[0].clientY - rect.top;
-             }
+        gameContainer.addEventListener('touchend', stopFire);
+        gameContainer.addEventListener('touchmove', (e) => {
+            if (isPlaying) {
+                const rect = gameContainer.getBoundingClientRect();
+                const touch = e.touches[0];
+                mouseX = touch.clientX - rect.left;
+                mouseY = touch.clientY - rect.top;
+                e.preventDefault();
+            }
         });
 
-        // --- ИГРОВОЙ ЦИКЛ ---
-        function gameLoop() {
+        function gameLoop(now) {
             if (!isPlaying) return;
+            requestAnimationFrame(gameLoop);
 
-            const width = container.offsetWidth;
-            const height = container.offsetHeight;
+            const w = gameContainer.offsetWidth;
+            const h = gameContainer.offsetHeight;
+            if (w === 0) return;
 
-            // 1. СЛОЖНОСТЬ (Ускоряем мишень каждые 500 очков)
-            // Множитель сложности: 1.0 в начале, 1.5 при 1000 очках и т.д.
-            const difficultyMultiplier = 1 + (score / 2000); 
-            
-            // 2. ДВИЖЕНИЕ МИШЕНИ
-            targetX += currentSpeedX * difficultyMultiplier;
-            if (targetX > width / 2 - 50 || targetX < -width / 2 + 50) currentSpeedX *= -1;
-
-            targetY += currentSpeedY * difficultyMultiplier;
-            if (targetY > height / 2 - 60 || targetY < -height / 2 + 60) currentSpeedY *= -1;
-
-            if(targetWrapper) {
+            const difficulty = 1 + score / 1800;
+            targetX += speedX * difficulty;
+            if (targetX > w/2 - 60 || targetX < -w/2 + 60) speedX *= -1;
+            targetY += speedY * difficulty;
+            if (targetY > h/2 - 70 || targetY < -h/2 + 70) speedY *= -1;
+            if (targetWrapper) {
                 targetWrapper.style.transform = `translate(calc(-50% + ${targetX}px), calc(-50% + ${targetY}px)) rotateX(45deg)`;
             }
 
-            // 3. ДРОЖАНИЕ (Тоже растет от сложности)
-            const shakeAmount = (isFiring ? 3 : 1.5) * (difficultyMultiplier * 0.8);
-            noiseX += (Math.random() - 0.5) * shakeAmount;
-            noiseY += (Math.random() - 0.5) * shakeAmount;
+            const shake = (isFiring ? 3.2 : 1.8) * difficulty * 0.7;
+            noiseX += (Math.random() - 0.5) * shake;
+            noiseY += (Math.random() - 0.5) * shake;
             noiseX *= 0.9; noiseY *= 0.9;
-
-            currentAimX = mouseX + noiseX;
-            currentAimY = mouseY + noiseY;
-
-            if(aimSight) {
-                aimSight.style.left = currentAimX + 'px';
-                aimSight.style.top = currentAimY + 'px';
+            aimX = Math.min(w, Math.max(0, mouseX + noiseX));
+            aimY = Math.min(h, Math.max(0, mouseY + noiseY));
+            if (aimSight) {
+                aimSight.style.left = aimX + 'px';
+                aimSight.style.top = aimY + 'px';
             }
 
-            // 4. ОТРИСОВКА И ПРОВЕРКА
             if (isFiring) {
-                container.classList.add('firing');
-                
-                const startX = width / 2;
-                const startY = height;
-                const endX = currentAimX;
-                const endY = currentAimY;
-
-                const deltaX = endX - startX;
-                const deltaY = endY - startY;
-                const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 90;
-                const length = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-
-                if(streamBeam) {
+                gameContainer.classList.add('firing');
+                const startX = w/2, startY = h;
+                const endX = aimX, endY = aimY;
+                const dx = endX - startX, dy = endY - startY;
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+                const length = Math.min(Math.hypot(dx, dy), h);
+                if (streamBeam) {
                     streamBeam.style.height = length + 'px';
                     streamBeam.style.transform = `translateX(-50%) rotate(${angle}deg)`;
                 }
-                
-                // Проверка луча
-                const targetCenterX = (width / 2) + targetX;
-                const targetCenterY = (height / 2) + targetY;
-                const closest = getClosestPointOnSegment(targetCenterX, targetCenterY, startX, startY, endX, endY);
-                
-                const dx = Math.abs(closest.x - targetCenterX);
-                const dy = Math.abs(closest.y - targetCenterY) * 1.5; 
-                const dist = Math.sqrt(dx*dx + dy*dy);
-
-                if (dist < 60) {
-                    score += 5;
-                    if(splash) {
-                        splash.style.opacity = 1;
-                        splash.style.left = closest.x + 'px';
-                        splash.style.top = closest.y + 'px';
-                        splash.classList.add('splashing');
+                const targetCenterX = w/2 + targetX;
+                const targetCenterY = h/2 + targetY;
+                const closest = getClosestPoint(targetCenterX, targetCenterY, startX, startY, endX, endY);
+                const dist = Math.hypot(closest.x - targetCenterX, (closest.y - targetCenterY) * 1.4);
+                if (dist < 58) {
+                    if (now - lastScoreUpdate > 35) {
+                        score += 5;
+                        lastScoreUpdate = now;
+                        if (scoreSpan) scoreSpan.innerText = Math.floor(score);
                     }
-                    if(scoreDisplay) scoreDisplay.style.color = "#fff"; 
+                    if (splashDiv) {
+                        splashDiv.style.opacity = '1';
+                        splashDiv.style.left = closest.x + 'px';
+                        splashDiv.style.top = closest.y + 'px';
+                        splashDiv.classList.add('splashing');
+                        setTimeout(() => splashDiv.classList.remove('splashing'), 200);
+                    }
+                    if (scoreSpan) scoreSpan.style.color = '#facc15';
                 } else {
-                    if(splash) {
-                        splash.style.opacity = 0;
-                        splash.classList.remove('splashing');
-                    }
-                    if(scoreDisplay) scoreDisplay.style.color = "#55efc4";
+                    if (splashDiv) splashDiv.style.opacity = '0';
+                    if (scoreSpan) scoreSpan.style.color = '#55efc4';
                 }
-
             } else {
-                container.classList.remove('firing');
-                if(splash) splash.style.opacity = 0;
-                if(scoreDisplay) scoreDisplay.style.color = "#55efc4";
+                gameContainer.classList.remove('firing');
+                if (splashDiv) splashDiv.style.opacity = '0';
             }
-
-            if(scoreDisplay) scoreDisplay.innerText = Math.floor(score);
-            requestAnimationFrame(gameLoop);
         }
-    } else {
-        console.log("Игра не найдена.");
     }
-
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    
-    const accordions = document.querySelectorAll('.accordion-header');
-
-    accordions.forEach(accordion => {
-        accordion.addEventListener('click', function() {
-            // 1. Переключаем активный класс на самой кнопке (для поворота иконки и цвета)
-            this.classList.toggle('active');
-
-            // 2. Находим блок с контентом, который идет сразу после кнопки
-            const content = this.nextElementSibling;
-
-            // 3. Логика открытия/закрытия с анимацией
-            if (content.style.maxHeight) {
-                // Если max-height установлен, значит блок открыт -> закрываем
-                content.style.maxHeight = null;
-                content.classList.remove('open');
-            } else {
-                // Если null, значит закрыт -> открываем
-                // scrollHeight - это реальная высота контента внутри
-                content.style.maxHeight = content.scrollHeight + "px"; 
-                content.classList.add('open');
-            }
-        });
-    });
 });

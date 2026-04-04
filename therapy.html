@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лечение Паруреза - Методы и Практика</title>
-    <script>
-        // Мгновенное применение темы
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        })();
-    </script>
+   <script>
+    (function() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === null) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (saved === null) localStorage.setItem('theme', 'dark');
+        }
+    })();
+</script>
     <link rel="stylesheet" href="style.css">
     <style>
         /* Локальные стили для специфических блоков этой страницы */
@@ -51,7 +51,7 @@
 
     <div id="warning-banner" class="warning">
         <div class="container">
-            <span>⚠️ Методики требуют практики. Не отчаивайтесь, если не выйдет с первого раза.</span>
+            <span>⚠️ Методики требуют практики. Не отчаивайтесь, если не выйдет с первого раза. <br>Сайт носит ознакомительный характер, трбуется консультацию врача.</span>
             <span id="close-btn" class="close-btn">&times;</span>
         </div>
     </div>
@@ -77,8 +77,8 @@
     <div class="container main-content">
         
         <h2>Четыре пути к выздоровлению</h2>
-        <p>Лечение паруреза делится на два направления. Лучший результат дает их комбинация. <br><strong>Нажмите на раздел ниже, чтобы раскрыть подробности.</strong></p>
-        
+        <h3>Лечение паруреза делится на два направления. Лучший результат дает их комбинация.</h3>
+        <p><strong>⚠️Нажмите на раздел ниже, чтобы раскрыть подробности.</strong></p>
         <div class="accordion">
 
             <div class="accordion-item">

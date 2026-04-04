@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Парурез: Полный гид по синдрому</title>
     <script>
-        // Этот код срабатывает мгновенно, до отрисовки страницы
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        })();
-    </script>
+    (function() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === null) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (saved === null) localStorage.setItem('theme', 'dark');
+        }
+    })();
+</script>
     <link rel="stylesheet" href="style.css">
 </head>
 

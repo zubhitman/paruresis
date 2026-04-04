@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Диагностика Паруреза - Как определить синдром?</title>
     <script>
-        // Этот код срабатывает мгновенно, до отрисовки страницы
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        })();
-    </script>
+    (function() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === null) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if (saved === null) localStorage.setItem('theme', 'dark');
+        }
+    })();
+</script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -47,7 +47,7 @@
         <h2>Шаг 1. Исключение физических патологий</h2>
         <p>Парурез — это <strong>диагноз исключения</strong>. Прежде чем работать с психологией, необходимо посетить уролога, чтобы убедиться, что ваши трудности не вызваны физическими проблемами.</p>
         
-        <div style="background: #eef7ff; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0;">
+        <div style="padding: 15px; margin: 20px 0;">
             <strong>Важно:</strong> Врач должен исключить такие состояния, как:
             <ul>
                 <li>Доброкачественная гиперплазия предстательной железы (у мужчин).</li>
@@ -101,16 +101,16 @@
 
         <h2>Чек-лист симптомов</h2>
         <p>Если вы ответили "ДА" на 3 и более вопросов, скорее всего, у вас Парурез:</p>
-        <ul style="list-style: none; padding-left: 0;">
-            <li>✅ Беспокоитесь ли вы заранее о наличии туалета в новом месте?</li>
-            <li>✅ Избегаете ли вы пить жидкость перед выходом из дома?</li>
-            <li>✅ Пытаетесь ли вы найти самый дальний или звукоизолированный туалет?</li>
-            <li>✅ Включаете ли вы воду в кране, чтобы создать шум (маскировка звука)?</li>
-            <li>✅ Чувствуете ли вы, что ваше горло или пресс напрягаются, когда вы пытаетесь помочиться при людях?</li>
+        <ul>
+            <li> Беспокоитесь ли вы заранее о наличии туалета в новом месте?</li>
+            <li>Избегаете ли вы пить жидкость перед выходом из дома?</li>
+            <li>Пытаетесь ли вы найти самый дальний или звукоизолированный туалет?</li>
+            <li>Включаете ли вы воду в кране, чтобы создать шум (маскировка звука)?</li>
+            <li>Чувствуете ли вы, что ваше горло или пресс напрягаются, когда вы пытаетесь помочиться при людях?</li>
         </ul>
 
         <div style="text-align: center; margin-top: 40px;">
-            <p>Узнали себя? Это лечится.</p>
+            <p>Узнали себя? Это лечится.</p><br>
             <a href="therapy.html" style="background: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">Перейти к методам лечения →</a>
         </div>
 
